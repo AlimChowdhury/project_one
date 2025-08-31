@@ -2,10 +2,6 @@
 
 @section('content')
 
-
-
-
-
     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data"
         class="p-4 border rounded shadow-sm bg-light" style="max-width: 600px; margin: auto;">
         @csrf
@@ -39,6 +35,8 @@
             @endforeach
         </select>
 
+          
+
         <select name="district_id" id="district_id" class="form-control mt-2">
             <option value="">Select District</option>
         </select>
@@ -70,6 +68,7 @@
                     });
                 });
             }
+           
         });
 
         $('#district_id').on('change', function () {
@@ -84,8 +83,6 @@
                     });
                 });
             }
-        });
-
-        
+        });        
     });
 </script>

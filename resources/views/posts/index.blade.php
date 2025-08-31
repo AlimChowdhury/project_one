@@ -3,7 +3,6 @@
 @section('content')
     <h1>All Posts</h1>
 
-
     <div>
         <h3>Hello, {{ Auth::user()->name }}</h3>
     </div>

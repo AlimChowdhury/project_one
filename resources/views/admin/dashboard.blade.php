@@ -40,7 +40,7 @@
             <h4>Dashboard</h4>
             <a href="{{ route('admin.users', ['id' => Auth::user()->id]) }}">Users Permission</a>
             <a href="{{ route('posts.index') }}">Posts</a>
-            <a href="{{ route('user-dropdown') }}" class="btn btn-primary">Filter User</a>
+            <a href="{{ route('admin.user_filter') }}" class="btn btn-primary">Filter User</a>
 
 
         </div>

@@ -22,18 +22,20 @@ use App\Http\Controllers\InfoController;
 Route::get('/', function () {
     return view('welcome');
 });
-  
 
-Route::get('/user-dropdown', [InfoController::class, 'index'])->name('user-dropdown');
-Route::get('/get-user-info', [InfoController::class, 'getUserInfo'])->name('user.info');
 
+//Route::get('/filter-users', [UserController::class, 'filterUsers'])->name('users.filter');
 
 Route::get('/user-filter', [UserFilterController::class, 'index'])->name('admin.user_filter');
+Route::get('/filter-users', [UserFilterController::class, 'filterUsers'])->name('filter.users');
+
+Route::get('/filter-get-districts/{division}', [UserFilterController::class, 'getDistricts'])->name('filter.getDistricts');
+Route::get('/filter-get-upazilas/{district}', [UserFilterController::class, 'getUpazilas'])->name('filter.getUpazilas');
+
 
 
 Route::get('/get-districts/{division}', [LocationController::class, 'getDistricts']);
 Route::get('/get-upazilas/{district}', [LocationController::class, 'getUpazilas']);
-
 
 
 
@@ -53,14 +55,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //profile
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
-Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 
 
 
 // Post routes (available to all logged-in users)
-Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware('isPost','auth');
+Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware('isPost','profile.complete','auth');
 Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create')->middleware('isPost');
 Route::post('/posts', [PostController::class, 'store'])->name('posts.store')->middleware('isPost');
 Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show')->middleware('isPost');
@@ -75,6 +77,11 @@ Route::prefix('admin')->middleware('isAdmin')->group(function () {
     Route::get('{id}/users', [AdminController::class, 'listUsers'])->name('admin.users');
     Route::get('{id}/users/{userId}/edit-permissions', [AdminController::class, 'editPermissions'])->name('admin.editPermissions');
     Route::post('{id}/users/{userId}/update-permissions', [AdminController::class, 'updatePermissions'])->name('admin.updatePermissions');
+});
+
+Route::middleware([])->group(function () {
+    Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users.index');
+    Route::put('/admin/users/{user}', [AdminController::class, 'update'])->name('admin.users.update');
 });
 
 
