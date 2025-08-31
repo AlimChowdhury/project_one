@@ -4,37 +4,54 @@ namespace App\Http\Controllers;
 use App\Models\Division;
 use App\Models\User;
 use App\Models\District;
+use App\Models\Upazila;
 use Illuminate\Http\Request;
-
+use Auth;
+use Log;
 
 class UserFilterController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
         $divisions = Division::all();
-        $users = User::with(['division', 'district', 'upazila'])->get(); // eager load if needed
+        $districts = collect();
+        $upazilas = collect();
+        $users = User::with(['division', 'district', 'upazila'])->get();
 
-        return view('admin.user_filter');
+        return view('user-dropdown', compact('user', 'divisions', 'districts', 'upazilas', 'users'));
     }
 
-    public function filter(Request $request)
+    public function filterUsers(Request $request)
     {
-        $query = User::query();
+       // Log::info(' Laravel received:', $request->only(['division_id', 'district_id', 'upazila_id']));
+        //dd($request->all());
+
+        $query = User::with(['division', 'district', 'upazila']);
 
         if ($request->division_id) {
             $query->where('division_id', $request->division_id);
         }
-
         if ($request->district_id) {
             $query->where('district_id', $request->district_id);
         }
-
         if ($request->upazila_id) {
             $query->where('upazila_id', $request->upazila_id);
         }
 
         $users = $query->get();
 
-        return response()->json($users);
+        return view('partials.user-table', compact('users'))->render();
+    }
+
+    public function getDistricts($divisionId)
+    {
+        return response()->json(District::where('division_id', $divisionId)->get());
+    }
+
+    public function getUpazilas($districtId)
+    {
+        return response()->json(Upazila::where('district_id', $districtId)->get());
     }
 }
+

@@ -10,11 +10,6 @@ use Illuminate\Http\Request;
 class LocationController extends Controller
 {
 
-    public function filter_user()
-    {
-        return view('admin.user_filter');
-    }
-
     public function getDistricts($divisionId)
     {
         $districts = District::where('division_id', $divisionId)->get();

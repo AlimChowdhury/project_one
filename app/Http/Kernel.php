@@ -64,7 +64,11 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-         'isAdmin' => \App\Http\Middleware\IsAdmin::class,
-         'isPost' => \App\Http\Middleware\IsPost::class,
+        'isAdmin' => \App\Http\Middleware\IsAdmin::class,
+        'isPost' => \App\Http\Middleware\IsPost::class,
+        'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
+        'admin.edit.users' => \App\Http\Middleware\EnsureAdminCanEditUsers::class,
+
+
     ];
 }
