@@ -45,14 +45,11 @@ class AdminController extends Controller
         return redirect()->route('admin.users', $id)->with('success', 'Permissions updated!');
     }
 
-    public function index()
-    {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
-    }
-
     public function update(Request $request, User $user)
     {
+        //\Log::info('Update request received for user ID: ' . $user->id);
+        //\Log::info($request->all());
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -62,8 +59,9 @@ class AdminController extends Controller
 
         $user->update($request->only(['name', 'email', 'phone', 'bio']));
 
-        return back()->with('success', 'User updated successfully!');
+        return redirect()->route('admin.user_filter')->with('success', 'User updated successfully!');
     }
+
 
 
 }

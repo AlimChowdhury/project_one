@@ -24,7 +24,7 @@ class UserFilterController extends Controller
 
     public function filterUsers(Request $request)
     {
-       // Log::info(' Laravel received:', $request->only(['division_id', 'district_id', 'upazila_id']));
+        // Log::info(' Laravel received:', $request->only(['division_id', 'district_id', 'upazila_id']));
         //dd($request->all());
 
         $query = User::with(['division', 'district', 'upazila']);
@@ -39,9 +39,15 @@ class UserFilterController extends Controller
             $query->where('upazila_id', $request->upazila_id);
         }
 
-        $users = $query->get();
+        if ($request->created_date) {
+            $query->whereDate('created_at', $request->created_date);
+        }
 
-        return view('partials.user-table', compact('users'))->render();
+        // $users = $query->get();
+      //  $users = $query->paginate(3)->appends($request->all()); //show * user
+           $users = User::paginate(3); 
+
+        return view('partials.user-table', compact('users'));
     }
 
     public function getDistricts($divisionId)
