@@ -29,75 +29,88 @@
                     <option value="">Select Upazila</option>
                 </select>
             </div>
+
+            <div class="col-md-4">
+                <input type="date" name="created_date" id="created_date" class="form-control">
+            </div>
+
         </div>
 
         {{-- User Table --}}
         <div id="userTable">
             @include('partials.user-table', ['users' => $users])
         </div>
+
     </div>
-    
+
     <script>
-    $(document).ready(function () {
-        function filterUsers() {
-            let divisionId = $('#division_id').val();
-            let districtId = $('#district_id').val();
-            let upazilaId = $('#upazila_id').val();
-    
-            // console.log("Filtering with:", { divisionId, districtId, upazilaId }); 
-    
-            $.get("{{ route('filter.users') }}", {
-                division_id: divisionId,
-                district_id: districtId,
-                upazila_id: upazilaId
-            }, function (html) {
-                $('#userTable').html(html);
+        $(document).ready(function () {
+            function filterUsers() {
+                let divisionId = $('#division_id').val();
+                let districtId = $('#district_id').val();
+                let upazilaId = $('#upazila_id').val();
+                let createdDate = $('#created_date').val();
+
+                // console.log("Filtering with:", { divisionId, districtId, upazilaId }); 
+
+                $.get("{{ route('filter.users') }}", {
+                    division_id: divisionId,
+                    district_id: districtId,
+                    upazila_id: upazilaId,
+                    created_date: createdDate
+                }, function (html) {
+                    $('#userTable').html(html);
+                });
+            }
+
+            // Division change
+            $('#division_id').on('change', function () {
+                let divisionId = $(this).val();
+                $('#district_id').html('<option value="">Loading...</option>');
+                $('#upazila_id').html('<option value="">Select Upazila</option>');
+
+                if (divisionId) {
+                    $.get('{{ url("filter-get-districts") }}/' + divisionId, function (data) {
+                        $('#district_id').empty().append('<option value="">Select District</option>');
+                        data.forEach(function (district) {
+                            $('#district_id').append(`<option value="${district.id}">${district.name}</option>`);
+                        });
+                        filterUsers();
+                    });
+                } else {
+                    filterUsers();
+                }
             });
-        }
 
-        // Division change
-        $('#division_id').on('change', function () {
-            let divisionId = $(this).val();
-            $('#district_id').html('<option value="">Loading...</option>');
-            $('#upazila_id').html('<option value="">Select Upazila</option>');
+            // District change
+            $('#district_id').on('change', function () {
+                let districtId = $(this).val();
+                $('#upazila_id').html('<option value="">Loading...</option>');
 
-            if (divisionId) {
-                $.get('{{ url("filter-get-districts") }}/' + divisionId, function (data) {
-                    $('#district_id').empty().append('<option value="">Select District</option>');
-                    data.forEach(function (district) {
-                        $('#district_id').append(`<option value="${district.id}">${district.name}</option>`);
+                if (districtId) {
+                    $.get('{{ url("filter-get-upazilas") }}/' + districtId, function (data) {
+                        $('#upazila_id').empty().append('<option value="">Select Upazila</option>');
+                        data.forEach(function (upazila) {
+                            $('#upazila_id').append(`<option value="${upazila.id}">${upazila.name}</option>`);
+                        });
+                        filterUsers();
                     });
+                } else {
                     filterUsers();
-                });
-            } else {
+                }
+            });
+
+            // Upazila change
+            $('#upazila_id').on('change', function () {
                 filterUsers();
-            }
-        });
+            });
 
-        // District change
-        $('#district_id').on('change', function () {
-            let districtId = $(this).val();
-            $('#upazila_id').html('<option value="">Loading...</option>');
-
-            if (districtId) {
-                $.get('{{ url("filter-get-upazilas") }}/' + districtId, function (data) {
-                    $('#upazila_id').empty().append('<option value="">Select Upazila</option>');
-                    data.forEach(function (upazila) {
-                        $('#upazila_id').append(`<option value="${upazila.id}">${upazila.name}</option>`);
-                    });
-                    filterUsers();
-                });
-            } else {
+            //date filter
+            $('#created_date').on('change', function () {
                 filterUsers();
-            }
-        });
+            });
 
-        // Upazila change
-        $('#upazila_id').on('change', function () {
-            filterUsers();
         });
-
-    });
     </script>
 @endsection
 

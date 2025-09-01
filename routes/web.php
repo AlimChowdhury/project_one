@@ -79,10 +79,7 @@ Route::prefix('admin')->middleware('isAdmin')->group(function () {
     Route::post('{id}/users/{userId}/update-permissions', [AdminController::class, 'updatePermissions'])->name('admin.updatePermissions');
 });
 
-Route::middleware([])->group(function () {
-    Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users.index');
-    Route::put('/admin/users/{user}', [AdminController::class, 'update'])->name('admin.users.update');
-});
 
+Route::put('/admin/users/{user}', [AdminController::class, 'update'])->name('admin.users.update')->middleware(['auth', 'admin.edit.users']);
 
 
